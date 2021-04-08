@@ -94,10 +94,14 @@
                 $.ajax({
                     type: "post",
                     url: apiUrl + "Token",
-                    data: {grant_type: "password", username: email, password: password},
+                    data: { grant_type: "password", username: email, password: password },
                     success: function (data) {
                         var rememberMe = $("#inputRememberMe").prop("checked")
-                        var stroge = rememberMe ? localStorage : sessionStorage;
+                        var storage = rememberMe ? localStorage : sessionStorage;
+                        girisVerileriniTemizle();
+                        storage["login"] = JSON.stringify(data)
+                        toastr.success("Merhaba " + data.userName + ", başarıyla giriş yaptın.");
+                        frm.reset();
                     },
                     error: function (xhr, status, error) {
                         showErrors(xhr.responseJSON);
@@ -105,6 +109,11 @@
                 });
             }
         });
+
+        function girisVerileriniTemizle() {
+            localStorage.removeItem("login");
+            sessionStorage.removeItem("login");
+        }
 
         function showErrors(data) {
             if (data.ModelState) {
